@@ -37,10 +37,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          APPROVER="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/approvals" \
-            --jq '[.[] | select(.state == "approved") | .user.login] | unique | join(", ")')"
+          APPROVALS="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/approvals")"
+          APPROVER="$(jq -r '[.[] | select(.state == "approved") | .user.login] | unique | join(", ")' <<< "$APPROVALS")"
           if [ -z "$APPROVER" ]; then
-            echo "No approval found. Configure required reviewers on the 'release' environment."
+            # An admin bypass ("Bypass protection rules") is recorded as "skipped": it is not release evidence.
+            BYPASSED="$(jq -r '[.[] | select(.state == "skipped") | .user.login] | unique | join(", ")' <<< "$APPROVALS")"
+            if [ -n "$BYPASSED" ]; then
+              echo "::error::The 'release' environment was bypassed by $BYPASSED, not approved. A bypass is not release evidence. Re-run this workflow and choose 'Review deployments' > 'Approve and deploy'."
+            else
+              echo "::error::No approval found. Configure required reviewers on the 'release' environment."
+            fi
             exit 1
           fi
           echo "APPROVER=$APPROVER" >> "$GITHUB_ENV"

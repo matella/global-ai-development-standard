@@ -15,7 +15,7 @@ Before the first publication of a version, its tag may be re-pointed, but only a
 
 A repository administrator configures these before the first `v*` tag is pushed. Until the `release` environment has required reviewers, every tag push makes the release workflow fail at its approval step, and nothing is published.
 
-- Create the `release` environment with required reviewers, and restrict its deployments to `v*` tags.
+- Create the `release` environment with required reviewers, restrict its deployments to `v*` tags, and turn off "Allow administrators to bypass configured protection rules".
 - Protect `v*` tags against deletion and update.
 - Sign release tags (`git tag -s`) with a key registered on GitHub.
 
@@ -48,7 +48,7 @@ A repository administrator configures these before the first `v*` tag is pushed.
    git push origin vX.Y.Z
    ```
 
-6. **Approve the release.** The workflow stops at the `release` GitHub environment. Its required reviewers approve the publication. Without that environment configured with reviewers, the workflow fails at the approval step and nothing is published. See [GOVERNANCE.md](../integrations/paperclip/GOVERNANCE.md#limits-of-gads-and-paperclip-enforcement).
+6. **Approve the release.** The workflow stops at the `release` GitHub environment. A required reviewer opens the run, selects **Review deployments**, and chooses **Approve and deploy**. Without that environment configured with reviewers, the workflow fails at the approval step and nothing is published. An administrator bypass is recorded as `skipped`, not `approved`; the workflow treats it as missing evidence and fails without publishing. See [GOVERNANCE.md](../integrations/paperclip/GOVERNANCE.md#limits-of-gads-and-paperclip-enforcement).
 7. **Verify the published artifacts.** Download the ZIP and checksum file, then run `sha256sum -c` against the published checksums. Verify that the archive lists the same files as `git ls-tree -r --name-only vX.Y.Z`. Verify the provenance attestation:
 
 ```bash

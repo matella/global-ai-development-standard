@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The release workflow reports an administrator bypass of the `release` environment as a bypass, not as a missing approval. `docs/RELEASE.md` says to approve through **Review deployments** and to turn off administrator bypass.
+
 ## 1.1.0 — 2026-10-30
 
 - Restored the one-time repository setup for releases (environment reviewers, tag protection, tag signing) in `docs/RELEASE.md`.
