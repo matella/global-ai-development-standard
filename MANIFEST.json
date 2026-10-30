@@ -1,6 +1,6 @@
 {
   "name": "Global AI Development Standard",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "created": "2026-10-30",
   "language": "en",
   "files": {
@@ -26,7 +26,7 @@
     "agents/skeptic.md": "799100bf5a0d1a0e1ffd234a08d0125761f564c4544d21e1ffabd55c91477f40",
     "agents/tech-lead.md": "f17677eebb2ecc049c46677b1dcabf616e25bd58879b67dad92b6b1f9b11f03f",
     "AGENTS.md": "57bdd1451d22107f2390700f7a5ef96936661f944df78c2011d2573e1731bcc4",
-    "CHANGELOG.md": "4975d30e78f6ae9cb4e378aaaecb5daaa751e45098373929ff0f35d21c9d8e8f",
+    "CHANGELOG.md": "69e0a13922eab8cc78d20108b9bcb6746ac9c91045d3c857fde8752472a9f180",
     "CLAUDE.md": "488aa716a7b945d68aa17caae036172a2350960bf2635b3d188206d3f3d1c77e",
     "CODE_OF_CONDUCT.md": "beb50f7f1f4b4708bc8ec1bb434f5a407dec5342e765ffff55969ab177c7c212",
     "CONTRIBUTING.md": "8fad65326607f4c93bb6d3821ca4ea96e71bbf0a07476b93fc6eb424fa5049af",
@@ -57,9 +57,9 @@
     "integrations/paperclip/skills/gads-testing-qa/SKILL.md": "68ee7febcf84a82690d672a2246908f15ac8f5d77be596ae568960b04d147873",
     "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
     "pilot/PILOT_CHECKLIST.md": "0d32d55bc2d5030ed5cbded689789509ca67df3f6c4fe8bd2c4105369a76bdf1",
-    "README.md": "5a7ef7980b2fdf1ebb2822fcb6a8ac0204d4dda3e2991f4ab615681ec59d3f14",
+    "README.md": "5733ccd61f13ae5893f93bf734e773b04211eef2fff414701c2b4dc378f3ea00",
     "ruff.toml": "9429e055451d348409af99e3b10ff8d3fdf706f6539b6acb120579264266665e",
-    "scripts/example-release-report.json": "43d720a2fb0381c2c075c63bb3ede111ccee41c30461e87200db88747b0fcfe8",
+    "scripts/example-release-report.json": "759f2eda3e37e342c9b5cd2ad640aff65e14d0d1cb75e03f319de8cdfacdfc25",
     "scripts/gads_layout.py": "9b9e7903203f4a928b73780482d6ff502b9aca58cbf8b6704ba879646210d670",
     "scripts/install.py": "1e525ea2e296181da7e8351ee92bf51f2ceb66499e0422a60b7f18f9dc408bf3",
     "scripts/release_gate.py": "200d8a7ceec9ed1fc9bce8d9cafea29d4dad57f98ae8f64723f33a538e36edf8",
@@ -85,6 +85,6 @@
     "tests/test_paperclip_integration.py": "40461c7cda80b3829b58b373002461947e3cfe842db30597c930ce57dfbedcf4",
     "tests/test_release_gate.py": "e960574340611eb2b553bdfe1f4042d63168eec667f3685f0d6f0dc8c347aa4c",
     "tests/test_release_report.py": "556ff2d942935dc18411021938300bd975cfff31dffde8b940db622881fc247c",
-    "VERSION": "1e5b51cde515396a9fa762909cf8ca6584ccc564b325d2eebeea76175fe95c4d"
+    "VERSION": "6cf4e084b47f33c9b02ef79279d157833868f8f70514169a768be353ee328fea"
   }
 }

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.1 — 2026-10-31
 
 - **Roles:** role labels are now followed by smaller models too. `CLAUDE.md` gains a "Role labels" section with an example, telling the main agent to relay each subagent's result under its label instead of its own heading. Each rendered subagent description names its label, and each role file states the label at the top. In a two-role test on `claude-haiku-5-5`, labels appeared in 3 of 3 runs, against 0 of 3 with 1.2.0.
 
