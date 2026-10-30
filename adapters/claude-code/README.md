@@ -34,7 +34,9 @@ edits; the tool list cannot enforce that through `Bash`.
   infrastructure changes, piping remote scripts to a shell, and shell commands that touch secrets
   files (`.env*` except `.env.example`, `*.pem`, `*.key`, SSH keys). Git rules also match when global
   options precede the subcommand (`git -C dir reset --hard`). It denies recursive deletion of `/` or
-  `~`, including `-R`, `--recursive`, `/*`, `~/*`, `$HOME`, and `${HOME}` targets.
+  `~`, including `-R`, `--recursive`, `/*`, `~/*`, `$HOME`, and `${HOME}` targets, inside subshells,
+  `$(...)`, backticks, and nested `bash -c "..."` strings. The check is conservative: it also denies
+  a command that only prints such text, for example `echo "rm -rf /"`.
 - The hook fails closed: an event it cannot evaluate gets an "ask" decision.
 - The hook runs `python3`. If `python3` is missing (common on Windows), Claude Code reports a hook
   error and runs the command without the guard; no change inside the script can prevent that.

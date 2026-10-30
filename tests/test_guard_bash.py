@@ -42,7 +42,8 @@ class GuardBashTests(unittest.TestCase):
         # Bypasses found by the v1.1.0 validation campaign (evidence: guard-probe-v1.0.0.jsonl).
         for command in ["rm -R /", "rm --recursive --force /", "rm -rf /*", "rm -rf ~/*", 'rm -rf "$HOME"',
                         "rm -rf ${HOME}", "rm -rf -- /", "cd /tmp && rm -rf ~/", "/bin/rm -rf /",
-                        "rm -fR $HOME/*", "true; rm -rf /."]:
+                        "rm -fR $HOME/*", "true; rm -rf /.", "(rm -rf /)", "$(rm -rf ~)", "`rm -rf /`",
+                        'bash -c "rm -rf /"', "x=1;(rm -R ~/*)", "sh -c 'cd /tmp && rm -rf $HOME'"]:
             self.assertEqual(decision(command), "deny", command)
 
     def test_scoped_recursive_deletion_passes(self):

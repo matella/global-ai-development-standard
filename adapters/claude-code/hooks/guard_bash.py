@@ -42,7 +42,7 @@ ASK = [
 ]
 # Targets that make a recursive rm destroy the filesystem root or the home directory.
 ROOT_OR_HOME = {"/", "~", "$HOME", "${HOME}"}
-SEGMENT = re.compile(r"&&|\|\||[;&|\n]")
+SHELL_PUNCTUATION = set("();<>|&")
 
 
 def root_or_home(target):
@@ -51,15 +51,41 @@ def root_or_home(target):
     return t in ROOT_OR_HOME or (t == "" and target.startswith("/"))
 
 
-def recursive_rm_of_root_or_home(command):
+def simple_commands(command):
+    """Split a shell command into simple commands, respecting quotes.
+
+    Separators (`;`, `&&`, `||`, `|`), subshells `( )`, `$( )` and backticks all
+    end a simple command. Raises ValueError on unbalanced quotes.
+    """
+    lexer = shlex.shlex(command.replace("`", " ; ").replace("\n", " ; "), posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    current = []
+    for tok in lexer:
+        if tok and set(tok) <= SHELL_PUNCTUATION:
+            if current:
+                yield current
+            current = []
+        else:
+            current.append(tok)
+    if current:
+        yield current
+
+
+def recursive_rm_of_root_or_home(command, depth=0):
     """Return a reason when any simple command is a recursive rm of / or the home directory."""
-    for segment in SEGMENT.split(command):
-        if not re.search(r"(?:^|[\s/])rm(?:\s|$)", segment):
-            continue
-        try:
-            tokens = shlex.split(segment)
-        except ValueError:
-            return "ask", "R4: could not parse an rm command"
+    if not re.search(r"\brm\b", command):
+        return None
+    try:
+        commands = list(simple_commands(command))
+    except ValueError:
+        return "ask", "R4: could not parse an rm command"
+    for tokens in commands:
+        # A quoted argument can itself be a command, as in `bash -c "rm -rf /"`.
+        for tok in tokens:
+            if depth < 3 and re.search(r"\brm\b", tok) and re.search(r"\s", tok):
+                nested = recursive_rm_of_root_or_home(tok, depth + 1)
+                if nested:
+                    return nested
         starts = [i for i, tok in enumerate(tokens) if tok == "rm" or tok.endswith("/rm")]
         for start in starts:
             recursive, targets, options = False, [], True

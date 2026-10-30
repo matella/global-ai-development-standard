@@ -33,6 +33,17 @@ class OpenCodeAdapterTests(unittest.TestCase):
                 later_allows = [p for p, e in self.bash[last_index + 1:] if e == "allow" and p.startswith(prefix)]
                 self.assertEqual(later_allows, [])
 
+    def test_no_general_interpreter_allowed(self):
+        # Allowing `python *` lets an agent run arbitrary code, making every command denial cosmetic.
+        allowed = [p for p, e in self.bash if e == "allow"]
+        for interpreter in ["python *", "python3 *", "node *", "bash *", "sh *", "*"]:
+            self.assertNotIn(interpreter, allowed)
+
+    def test_git_global_options_and_wrappers_denied(self):
+        rules = dict(self.bash)
+        for pattern in ["git -* push*", "git -* reset --hard*", "git -* clean*", "sudo *", "env *"]:
+            self.assertEqual(rules.get(pattern), "deny", pattern)
+
     def test_secret_files_unreadable(self):
         read = self.config["permission"]["read"]
         for pattern in [".env", ".env.*", "*.pem", "*.key"]:

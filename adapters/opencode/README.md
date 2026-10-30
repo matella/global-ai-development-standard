@@ -21,6 +21,8 @@ Extend the `bash` allow list with the project's own build and test commands, for
 - `opencode run --auto` approves every rule that is not explicitly denied, including `ask`. That is why R3/R4 commands are `deny`, not `ask`: an `ask` rule offers no protection in auto-approve automation.
 - Without `--auto`, a headless `opencode run` rejects unanswered `ask` requests.
 - A denial reports only `Permission denied: shell`, without the GADS reason. The agent sees that it was blocked, not why.
+- Any allowed interpreter or test runner can execute code the agent wrote, so command denials are a safety net, not a sandbox. The file allows only `python -m unittest`, `python -m pytest`, and `python scripts/*`, never a general `python *`. For unattended automation, consider `"*": "deny"` as the catch-all.
+- Git R3 rules are repeated as `git -* ...` so that global options (`git -C dir push`) do not evade them, and `sudo`, `env`, and `command` wrappers are denied.
 
 ## Validation
 
