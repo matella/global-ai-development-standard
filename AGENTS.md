@@ -14,6 +14,7 @@ If instructions conflict, stop before consequential action, explain the conflict
 ## Mandatory working rules
 
 - Inspect the repository before proposing or editing.
+- Read the project rules in gads/PROJECT.md before changing anything, when that file exists. Agents that do not load it automatically must open it.
 - Identify the relevant files, architecture, conventions, tests, and working-tree state.
 - Make the smallest coherent change that satisfies the task.
 - Do not overwrite unrelated user changes.

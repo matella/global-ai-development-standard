@@ -39,6 +39,15 @@ def audit(root: Path):
         drift = [rel for rel, digest in lock.get("files", {}).items() if current_hash(root / rel) != digest]
         findings.append(finding(f"unmodified_since_install:{LOCK}", not drift, "warning",
                                 version=lock.get("version"), **({"missing": drift} if drift else {})))
+        # The installer never replaces an existing settings file, so the guard can be silently absent.
+        settings = root / ".claude/settings.json"
+        wired = settings.is_file() and "guard_bash.py" in settings.read_text(encoding="utf-8")
+        findings.append(finding("claude_guard_hook_configured", wired, "warning",
+                                **({} if wired else {"missing": [".claude/settings.json: guard_bash.py hook"]})))
+        # --force keeps replaced instruction files only as backups; their rules are no longer loaded.
+        backups = sorted(p.name for name in ("AGENTS.md", "CLAUDE.md") for p in root.glob(f"{name}.gads-backup-*"))
+        findings.append(finding("instruction_backups_merged", not backups, "warning",
+                                **({"missing": backups} if backups else {})))
     findings.append(finding("git_repository", (root / ".git").exists(), "warning"))
     return {"root": str(root.resolve()), "read_only": True, "findings": findings,
             "summary": {"passed": sum(x["status"] == "pass" for x in findings),

@@ -25,12 +25,23 @@ edits; the tool list cannot enforce that through `Bash`.
 ## Settings and guard hook
 
 - `.claude/settings.json` is created only when absent. If the project already has one, the installer
-  skips it, even with `--force`. Merge the `permissions.deny` and `hooks` entries by hand.
+  skips it, even with `--force`, and prints a warning that the guard is not active. Merge the
+  `permissions.deny` and `hooks` entries by hand. `repo_audit.py` warns until the hook is wired.
+- The deny rules block the `Read` tool on `.env` and `.env.*` files in any directory (including
+  `.env.example`), `*.pem`, `*.key`, and SSH private keys.
 - The hook asks for human approval before force-push, remote ref or tag deletion or publication,
   history rewrites, discarding local work, GitHub release and repository changes, package publication,
-  infrastructure changes, and piping remote scripts to a shell. It denies recursive deletion of `/`
-  or `~`.
+  infrastructure changes, piping remote scripts to a shell, and shell commands that touch secrets
+  files (`.env*` except `.env.example`, `*.pem`, `*.key`, SSH keys). Git rules also match when global
+  options precede the subcommand (`git -C dir reset --hard`). It denies recursive deletion of `/` or
+  `~`, including `-R`, `--recursive`, `/*`, `~/*`, `$HOME`, and `${HOME}` targets, inside subshells,
+  `$(...)`, backticks, and nested `bash -c "..."` strings. The check is conservative: it also denies
+  a command that only prints such text, for example `echo "rm -rf /"`.
+- The hook fails closed: an event it cannot evaluate gets an "ask" decision.
 - The hook runs `python3`. If `python3` is missing (common on Windows), Claude Code reports a hook
-  error and runs the command without the guard. Adjust the command in `.claude/settings.json`.
+  error and runs the command without the guard; no change inside the script can prevent that.
+  Check with `python3 --version`, and adjust the command in `.claude/settings.json` if needed.
+- In a non-interactive session (`claude -p --permission-mode dontAsk`), an "ask" decision becomes a
+  denial. Interactive sessions show the approval prompt.
 - Pattern matching is a safety net, not a security boundary. Keep branch protection, required
   reviews, and least-privilege credentials in place.

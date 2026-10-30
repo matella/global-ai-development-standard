@@ -38,8 +38,40 @@ class GuardBashTests(unittest.TestCase):
         for command in ["rm -rf /", "rm -rf ~", "sudo rm -fr $HOME", "rm -r -f /"]:
             self.assertEqual(decision(command), "deny", command)
 
+    def test_root_deletion_variants_denied(self):
+        # Bypasses found by the v1.1.0 validation campaign (evidence: guard-probe-v1.0.0.jsonl).
+        for command in ["rm -R /", "rm --recursive --force /", "rm -rf /*", "rm -rf ~/*", 'rm -rf "$HOME"',
+                        "rm -rf ${HOME}", "rm -rf -- /", "cd /tmp && rm -rf ~/", "/bin/rm -rf /",
+                        "rm -fR $HOME/*", "true; rm -rf /.", "(rm -rf /)", "$(rm -rf ~)", "`rm -rf /`",
+                        'bash -c "rm -rf /"', "x=1;(rm -R ~/*)", "sh -c 'cd /tmp && rm -rf $HOME'"]:
+            self.assertEqual(decision(command), "deny", command)
+
+    def test_scoped_recursive_deletion_passes(self):
+        for command in ["rm -rf build/", "rm -rf ./dist", "rm -r ~/project/tmp", "rm /tmp/file",
+                        "rm -rf $HOME/.cache/pip", "rm -f ~"]:
+            self.assertIsNone(decision(command), command)
+
+    def test_git_global_options_do_not_evade_rules(self):
+        for command in ["git -C . reset --hard", "git -C 'my repo' reset --hard", "git -c core.x=y push --force",
+                        "git --git-dir=.git --work-tree=. clean -fdx", "git --no-pager push origin --delete old",
+                        "git -C sub filter-branch --all"]:
+            self.assertEqual(decision(command), "ask", command)
+
+    def test_secret_files_through_shell_ask(self):
+        for command in ["cat .env", "cat config/.env", "grep KEY .env.production", "cp .env /tmp/x",
+                        "cat certs/server.pem", "base64 deploy.key", "cat ~/.ssh/id_ed25519"]:
+            self.assertEqual(decision(command), "ask", command)
+        for command in ["cat .env.example", "cp .env.example .envrc.sample", "python -m dotenv --help",
+                        "cat keys.md", "ls .environment"]:
+            self.assertIsNone(decision(command), command)
+
     def test_unparseable_input_asks(self):
         self.assertEqual(decision(raw="not json"), "ask")
+
+    def test_malformed_events_fail_closed(self):
+        for raw in ['{"tool_input": {"command": ["git", "reset", "--hard"]}}', '{"tool_input": null}',
+                    '{"tool_input": {"command": 42}}', "[]"]:
+            self.assertEqual(decision(raw=raw), "ask", raw)
 
 
 if __name__ == "__main__":
