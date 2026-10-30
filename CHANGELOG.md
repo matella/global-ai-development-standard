@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The release workflow reports an administrator bypass of the `release` environment as a bypass, not as a missing approval. `docs/RELEASE.md` says to approve through **Review deployments** and to turn off administrator bypass.
+- **Installer:** install hashes treat CRLF as LF. A Windows checkout with `core.autocrlf=true` no longer makes `repo_audit.py` report every GADS file as modified, `install.py --upgrade` write `.gads-new` files for unchanged files, or `uninstall.py` refuse. Existing `gads/install.json` files stay valid.
 
 ## 1.1.0 — 2026-10-30
 
