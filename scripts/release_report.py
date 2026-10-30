@@ -24,10 +24,12 @@ def run_checks(only=None):
     for name, command in CHECKS:
         if only and name not in only:
             continue
-        if shutil.which(command[0]) is None:
+        executable = shutil.which(command[0])
+        if executable is None:
             skipped.append({"name": name, "reason": f"{command[0]} is not installed"})
             continue
-        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+        # Run the resolved path: on Windows, npm tools are .cmd files that the bare name cannot launch.
+        result = subprocess.run([executable, *command[1:]], cwd=ROOT, capture_output=True, text=True)
         status = "passed" if result.returncode == 0 else "failed"
         shown = command[1:] if command[0] == PY else command
         checks.append({"name": name, "status": status, "command": " ".join(shown)})
