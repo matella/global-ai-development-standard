@@ -133,7 +133,8 @@ class InstallCycleTests(unittest.TestCase):
 
     def simulate_previous_version(self, rel, content):
         """Make rel look like a pristine install of an older kit version."""
-        (self.target / rel).write_text(content, encoding="utf-8")
+        # Write bytes so Windows text mode cannot translate newlines and break the recorded hash.
+        (self.target / rel).write_bytes(content.encode("utf-8"))
         lock = self.lock()
         lock["version"] = "0.9.0"
         lock["files"][rel] = hashlib.sha256(content.encode()).hexdigest()

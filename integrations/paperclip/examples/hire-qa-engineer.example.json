@@ -1,0 +1,26 @@
+{
+  "_comment": "Example request body for POST /api/companies/{companyId}/agent-hires, shaped after the fields documented in paperclipai/paperclip. Replace every REPLACE_WITH_ value. Not executed in CI; see ../COMPATIBILITY.md.",
+  "name": "QA Engineer",
+  "role": "qa-engineer",
+  "title": "QA Engineer",
+  "capabilities": "Derives test scenarios from acceptance criteria, runs project tests, reports QA evidence with GADS templates.",
+  "desiredSkills": ["gads-core", "gads-testing-qa"],
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "cwd": "REPLACE_WITH_ABSOLUTE_PATH_TO_CHECKED_OUT_REPOSITORY",
+    "model": "REPLACE_WITH_MODEL_ID"
+  },
+  "instructionsBundle": {
+    "entryFile": "AGENTS.md",
+    "files": {
+      "AGENTS.md": "REPLACE_WITH_CONTENTS_OF_integrations/paperclip/roles/qa-engineer.md"
+    }
+  },
+  "runtimeConfig": {
+    "heartbeat": {
+      "enabled": false,
+      "wakeOnDemand": true
+    }
+  },
+  "budgetMonthlyCents": 0
+}

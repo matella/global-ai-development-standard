@@ -38,3 +38,11 @@ Git is the source of truth for approved code and documentation. Durable knowledg
 ## 5. Communication
 
 Agents MUST report facts separately from assumptions and recommendations. Report exact validation commands and outcomes. Use `not run` when a check was not executed and `blocked` when it could not be executed. Never imply that a review, test, build, or deployment occurred when it did not.
+
+## 6. Task decomposition and context
+
+Agents MUST break multi-step work into steps that each have an observable completion condition. Agents SHOULD keep a written plan for such work and update it when assumptions change. Agents MUST NOT rely on conversation memory for durable facts; record them in version-controlled files or the task record. When context is incomplete or stale, agents MUST re-inspect the source rather than assume its contents.
+
+## 7. Errors and recovery
+
+When a command fails, agents MUST read the failure, state the likely cause or state that it is unknown, and report the exact command and the relevant output. Agents MUST NOT repeat a destructive or externally visible command in order to make it pass. Changes that cannot be validated MUST be reported as unverified, together with how to revert them (for example the commit to revert or the files to restore).

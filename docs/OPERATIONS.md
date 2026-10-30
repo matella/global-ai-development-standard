@@ -10,11 +10,11 @@
 
 ## Versioning and upgrades
 
-Pin a release tag (for example `v1.0.0`) or immutable commit SHA. Avoid tracking `main` for operational use. Upgrade with `install.py --upgrade` (see [Installation](INSTALLATION.md#upgrade)). Read the changelog, compare policy changes, run the included tests, and pilot upgrades on a non-critical repository before broad rollout (see the [pilot checklist](PILOT_CHECKLIST.md)).
+Pin a release tag (for example `v1.0.0`) or immutable commit SHA. Avoid tracking `main` for operational use. Upgrade with `install.py --upgrade` (see [Installation](INSTALLATION.md#upgrade)). Read the changelog, compare policy changes, run the included tests, and pilot upgrades on a non-critical repository before broad rollout (see the [pilot checklist](../pilot/PILOT_CHECKLIST.md)).
 
 ## Governance
 
-Assign a human owner for policy changes. Use pull requests, required reviewers, protected branches, and signed releases where appropriate. The kit does not configure these controls automatically.
+Assign a human owner for policy changes. Use pull requests, required reviewers, protected branches, and signed releases where appropriate. The kit does not configure these controls automatically. For how instructions, automated controls, approvals, and evidence fit together, see [GOVERNANCE.md](../integrations/paperclip/GOVERNANCE.md).
 
 ## Release evidence
 
@@ -32,20 +32,4 @@ The script rejects unfilled `REPLACE_WITH_...` values. It checks structure only;
 
 ## Publishing a release
 
-Pushing a `v*` tag runs `.github/workflows/release.yml`. The workflow:
-
-1. checks that the tag matches `VERSION`;
-2. waits for approval on the `release` GitHub environment;
-3. records the approving reviewers from the run's approval history;
-4. generates the release report and runs the release gate;
-5. builds zip and tar.gz archives with `SHA256SUMS`;
-6. attests build provenance for the archives;
-7. creates the GitHub release with the changelog section as notes.
-
-One-time setup by a repository administrator:
-
-- create the `release` environment with required reviewers, and restrict it to `v*` tags;
-- protect `v*` tags against deletion and update;
-- sign release tags (`git tag -s`) with a key registered on GitHub.
-
-Consumers can verify an archive with `gh attestation verify <archive> --repo <owner>/global-ai-development-standard`.
+The procedure, including the approval step, rollback, and artifact verification, is in [RELEASE.md](RELEASE.md).

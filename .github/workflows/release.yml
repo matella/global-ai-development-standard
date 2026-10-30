@@ -54,7 +54,7 @@ jobs:
         run: python scripts/release_gate.py dist/release-report.json
       - name: Build archives
         run: |
-          NAME="global-ai-development-standard-$VERSION"
+          NAME="global-ai-development-standard-v$VERSION"
           git archive --format=zip --prefix="$NAME/" -o "dist/$NAME.zip" HEAD
           git archive --format=tar.gz --prefix="$NAME/" -o "dist/$NAME.tar.gz" HEAD
           (cd dist && sha256sum ./*.zip ./*.tar.gz release-report.json > SHA256SUMS)
