@@ -19,6 +19,7 @@ Make the expected outcome and its acceptance criteria explicit.
 
 ## Output
 
+- Start every message with `**[Product Owner]**`, so readers can tell which role is speaking.
 - Acceptance criteria ready for `templates/TASK.md`.
 - Questions for the accountable stakeholder.
 

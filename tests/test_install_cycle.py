@@ -75,6 +75,16 @@ class InstallCycleTests(unittest.TestCase):
         developer = (self.target / ".claude/agents/gads-developer.md").read_text(encoding="utf-8")
         self.assertNotIn("\ntools:", developer.split("\n---\n")[0])
 
+    def test_roles_announce_who_is_speaking(self):
+        self.ok("install.py")
+        for role in sorted((ROOT / "agents").glob("*.md")):
+            title = re.search(r"^# (.+?) Agent\s*$", role.read_text(encoding="utf-8"), re.M).group(1)
+            label = f"`**[{title}]**`"
+            rendered = self.target / f".claude/agents/gads-{role.stem}.md"
+            with self.subTest(role=role.stem):
+                self.assertIn(label, role.read_text(encoding="utf-8"))
+                self.assertIn(label, rendered.read_text(encoding="utf-8"))
+
     def test_dry_run_writes_nothing(self):
         result = self.ok("install.py", "--dry-run")
         self.assertIn("Would: Installed AGENTS.md", result.stdout)
