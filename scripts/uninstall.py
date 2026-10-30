@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 
-from gads_layout import CREATE_ONLY, LOCK, current_hash, prune_empty_dirs, read_lock
+from gads_layout import CREATE_ONLY, LOCK, ROOT_FILES, current_hash, prune_empty_dirs, read_lock
 
 
 def main(argv=None):
@@ -38,6 +38,11 @@ def main(argv=None):
             prune_empty_dirs(target, rel)
     for rel in kept:
         print(f"Kept {rel}: modified by the project")
+    # An install with --force kept the project's original instruction files as backups.
+    for rel in ROOT_FILES:
+        for backup in sorted(target.glob(f"{rel}.gads-backup-*")):
+            print(f"Kept {backup.name}: the original {rel} from before GADS; restore it with "
+                  f"`mv {backup.name} {rel}`")
     for rel in lock.get("seeds", []):
         if (target / rel).exists():
             print(f"Kept project-owned {rel}")

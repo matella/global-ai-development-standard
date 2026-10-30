@@ -7,6 +7,7 @@ from pathlib import Path
 from gads_layout import (
     CREATE_ONLY,
     LOCK,
+    ROOT_FILES,
     current_hash,
     plan,
     prune_empty_dirs,
@@ -97,19 +98,37 @@ def main(argv=None):
     if args.upgrade and not lock:
         p.error(f"no {LOCK} found; run a fresh install first")
     actions, recorded, conflicts = decide(target, lock, args.force)
-    if conflicts:
+    prefix = "Would: " if args.dry_run else ""
+    if conflicts and not args.dry_run:
         p.error("destinations exist (use --force after review; originals are backed up): "
                 + ", ".join(conflicts))
-    prefix = "Would: " if args.dry_run else ""
     for action, rel, _ in actions:
         if action != "unchanged" or args.dry_run:
             print(prefix + MESSAGES[action].format(rel=rel, source=f"adapters/claude-code/{Path(rel).name}"))
-    if args.dry_run:
-        return 0
-    apply(target, actions, time.strftime("%Y%m%d%H%M%S"))
-    write_lock(target, recorded)
-    print(f"GADS {version()} recorded in {LOCK}")
+    if conflicts:
+        # Dry run: show the whole plan first, then refuse as the real run would.
+        p.error("destinations exist (use --force after review; originals are backed up): "
+                + ", ".join(conflicts))
+    stamp = time.strftime("%Y%m%d%H%M%S")
+    if not args.dry_run:
+        apply(target, actions, stamp)
+        write_lock(target, recorded)
+        print(f"GADS {version()} recorded in {LOCK}")
+    for note in next_steps(actions, stamp):
+        print(prefix + note)
     return 0
+
+
+def next_steps(actions, stamp):
+    """Follow-up the project must do by hand, so safety controls and rules are not silently lost."""
+    for action, rel, _ in actions:
+        if action == "skip" and rel == ".claude/settings.json":
+            yield ("WARNING: the GADS guard hook is NOT active. Merge `permissions.deny` and `hooks` from "
+                   "adapters/claude-code/settings.json into .claude/settings.json, then run repo_audit.py.")
+        elif action == "backup" and rel in ROOT_FILES:
+            yield (f"NEXT STEP: {rel} was replaced. Its previous rules are now only in "
+                   f"{rel}.gads-backup-{stamp} and are no longer loaded by agents. Move them into "
+                   "gads/PROJECT.md, then delete the backup.")
 
 
 if __name__ == "__main__":

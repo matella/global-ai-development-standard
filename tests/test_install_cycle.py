@@ -86,6 +86,38 @@ class InstallCycleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(sorted(snapshot(self.target)), ["AGENTS.md"])
 
+    def test_dry_run_shows_plan_before_refusing(self):
+        (self.target / "AGENTS.md").write_text("project rules\n", encoding="utf-8")
+        result = run("install.py", self.target, "--dry-run")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Would: Installed CLAUDE.md", result.stdout)
+        self.assertIn("AGENTS.md", result.stderr)
+        self.assertEqual(sorted(snapshot(self.target)), ["AGENTS.md"])
+
+    def test_replaced_instructions_are_flagged_until_merged(self):
+        (self.target / "CLAUDE.md").write_text("# Our rules\n", encoding="utf-8")
+        result = self.ok("install.py", "--force")
+        self.assertIn("NEXT STEP: CLAUDE.md was replaced", result.stdout)
+        audit = run("repo_audit.py", self.target)
+        self.assertIn("[WARNING] instruction_backups_merged", audit.stdout)
+        for backup in self.target.glob("CLAUDE.md.gads-backup-*"):
+            backup.unlink()
+        self.assertNotIn("[WARNING]", run("repo_audit.py", self.target).stdout)
+
+    def test_skipped_settings_leave_guard_flagged(self):
+        settings = self.target / ".claude/settings.json"
+        settings.parent.mkdir()
+        settings.write_text('{"permissions": {}}\n', encoding="utf-8")
+        result = self.ok("install.py")
+        self.assertIn("WARNING: the GADS guard hook is NOT active", result.stdout)
+        self.assertIn("[WARNING] claude_guard_hook_configured", run("repo_audit.py", self.target).stdout)
+
+    def test_uninstall_points_to_original_instructions(self):
+        (self.target / "AGENTS.md").write_text("project rules\n", encoding="utf-8")
+        self.ok("install.py", "--force")
+        result = self.ok("uninstall.py")
+        self.assertIn("restore it with `mv AGENTS.md.gads-backup-", result.stdout)
+
     def test_force_backs_up_modified_files(self):
         (self.target / "AGENTS.md").write_text("project rules\n", encoding="utf-8")
         self.ok("install.py", "--force")
