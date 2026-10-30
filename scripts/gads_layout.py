@@ -47,10 +47,17 @@ def split_frontmatter(text):
     return {k.strip(): v.strip() for k, v in fields.items()}, body.lstrip("\n")
 
 
+def role_title(body):
+    """Role name from the `# <Role> Agent` heading, used as the role's message label."""
+    return re.search(r"^# (.+?) Agent\s*$", body, re.M).group(1)
+
+
 def claude_agent(src_rel, text):
     """Render a canonical role definition as a Claude Code subagent file."""
     fields, body = split_frontmatter(text)
-    lines = ["---", f"name: gads-{fields['name']}", f"description: {fields['description']}"]
+    # The main agent sees only the description when it delegates and relays, so it names the label.
+    description = f"{fields['description']} Replies start with **[{role_title(body)}]**."
+    lines = ["---", f"name: gads-{fields['name']}", f"description: {description}"]
     tools = CLAUDE_TOOLS[fields["access"]]
     if tools:
         lines.append(f"tools: {tools}")
