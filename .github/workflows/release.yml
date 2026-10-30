@@ -1,0 +1,72 @@
+name: GADS Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # The release environment must require reviewers; the approval is the release evidence.
+    environment: release
+    permissions:
+      contents: write # create the GitHub release
+      id-token: write # sign the provenance attestation
+      attestations: write # store the provenance attestation
+      actions: read # read the environment approval history
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.15"
+      - name: Check tag matches VERSION
+        run: |
+          VERSION="$(cat VERSION)"
+          if [ "$GITHUB_REF_NAME" != "v$VERSION" ]; then
+            echo "tag $GITHUB_REF_NAME does not match VERSION $VERSION"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Install linters
+        run: |
+          python -m pip install ruff==0.17.1
+          npm install --global --ignore-scripts markdownlint-cli2@0.23.3
+      - name: Resolve environment approver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APPROVER="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/approvals" \
+            --jq '[.[] | select(.state == "approved") | .user.login] | unique | join(", ")')"
+          if [ -z "$APPROVER" ]; then
+            echo "No approval found. Configure required reviewers on the 'release' environment."
+            exit 1
+          fi
+          echo "APPROVER=$APPROVER" >> "$GITHUB_ENV"
+      - name: Generate release report
+        run: |
+          mkdir -p dist
+          python scripts/release_report.py --output dist/release-report.json \
+            --approver "$APPROVER (GitHub environment 'release', run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)" \
+            --approval-action "Publish release $GITHUB_REF_NAME"
+      - name: Release gate
+        run: python scripts/release_gate.py dist/release-report.json
+      - name: Build archives
+        run: |
+          NAME="global-ai-development-standard-$VERSION"
+          git archive --format=zip --prefix="$NAME/" -o "dist/$NAME.zip" HEAD
+          git archive --format=tar.gz --prefix="$NAME/" -o "dist/$NAME.tar.gz" HEAD
+          (cd dist && sha256sum ./*.zip ./*.tar.gz release-report.json > SHA256SUMS)
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            dist/*.zip
+            dist/*.tar.gz
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk -v v="$VERSION" '/^## /{if (p) exit; if (index($0, v)) p=1; next} p' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag \
+            --title "GADS $VERSION" --notes-file "$RUNNER_TEMP/notes.md"

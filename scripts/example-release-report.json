@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "commit": "REPLACE_WITH_FULL_COMMIT_SHA",
+  "checks": [
+    {
+      "name": "unit-tests",
+      "status": "passed"
+    },
+    {
+      "name": "manifest-verification",
+      "status": "passed"
+    },
+    {
+      "name": "repository-audit",
+      "status": "passed"
+    },
+    {
+      "name": "python-lint",
+      "status": "passed"
+    },
+    {
+      "name": "markdown-lint",
+      "status": "passed"
+    }
+  ],
+  "skipped_checks": [],
+  "known_risks": [
+    "The report structure does not authenticate evidence."
+  ],
+  "approvals": [
+    {
+      "action": "Publish release v1.0.0",
+      "approver": "REPLACE_WITH_ACCOUNTABLE_HUMAN"
+    }
+  ],
+  "rollback_plan": "Revert the release commit and redeploy the previous approved artifact."
+}

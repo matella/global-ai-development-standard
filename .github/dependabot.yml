@@ -1,0 +1,8 @@
+version: 2
+updates:
+  # Keeps the SHA-pinned actions current. The ruff and markdownlint-cli2 pins in the
+  # workflows are plain commands, so Dependabot does not update them.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

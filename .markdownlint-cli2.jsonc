@@ -1,0 +1,11 @@
+{
+  // Prose is wrapped by editors, not by hand.
+  "config": {
+    "MD013": false,
+    // Templates use <placeholder> text.
+    "MD033": false,
+    // Compact and aligned table pipes are both accepted.
+    "MD060": false
+  },
+  "ignores": ["node_modules/**", "dist/**"]
+}
