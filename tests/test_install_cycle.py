@@ -216,6 +216,38 @@ class InstallCycleTests(unittest.TestCase):
         self.assertIn("Would remove AGENTS.md", self.ok("uninstall.py", "--dry-run").stdout)
         self.assertEqual(snapshot(self.target), before)
 
+    def convert_to_crlf(self):
+        """Rewrite every installed file with CRLF, as a `core.autocrlf=true` checkout does."""
+        for rel in self.lock()["files"]:
+            path = self.target / rel
+            path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+
+    def test_crlf_checkout_audits_clean(self):
+        self.ok("install.py")
+        self.convert_to_crlf()
+        audit = run("repo_audit.py", self.target)
+        self.assertEqual(audit.returncode, 0, audit.stdout)
+        self.assertNotIn("[WARNING]", audit.stdout)
+
+    def test_crlf_checkout_upgrades_pristine_files(self):
+        self.ok("install.py")
+        self.simulate_previous_version("gads/standard/DECISION_POLICY.md", "old policy\n")
+        self.convert_to_crlf()
+        result = self.ok("install.py", "--upgrade")
+        self.assertIn("Updated gads/standard/DECISION_POLICY.md", result.stdout)
+        self.assertNotIn("merge by hand", result.stdout)
+        self.assertEqual(list(self.target.rglob("*.gads-new")), [])
+        # A real edit is still detected under CRLF.
+        policy = self.target / "gads/standard/DECISION_POLICY.md"
+        policy.write_bytes(policy.read_bytes() + b"local edit\r\n")
+        self.assertIn("[WARNING] unmodified_since_install", run("repo_audit.py", self.target).stdout)
+
+    def test_crlf_checkout_uninstalls(self):
+        self.ok("install.py")
+        self.convert_to_crlf()
+        self.ok("uninstall.py")
+        self.assertEqual(sorted(snapshot(self.target)), ["gads/PROJECT.md"])
+
     def test_kit_repository_passes_audit(self):
         audit = run("repo_audit.py", ROOT)
         self.assertNotIn("[FAIL]", audit.stdout)

@@ -27,7 +27,7 @@ python scripts/install.py /path/to/target-repository
 
 Markdown references to `standard/`, `agents/`, and `templates/` are rewritten to their `gads/` paths.
 
-The installer records the version and the SHA-256 of every file it writes in `gads/install.json`. Commit that file with the others.
+The installer records the version and the SHA-256 of every file it writes in `gads/install.json`. Commit that file with the others. Hashes treat CRLF as LF, so a Windows checkout with `core.autocrlf=true` still counts as unmodified.
 
 Existing files block the install unless `--force` is supplied. With `--force`, each differing file is first renamed to `<name>.gads-backup-<timestamp>`. An existing `.claude/settings.json` is never replaced; merge its entries by hand (see [Claude Code adapter](../adapters/claude-code/README.md)).
 

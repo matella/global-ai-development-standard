@@ -22,7 +22,12 @@ KIT_REF = re.compile(r"(?<=`)(standard|templates|agents)/")
 
 
 def sha256(data):
-    return hashlib.sha256(data).hexdigest()
+    """Hash content with CRLF read as LF, so a `core.autocrlf=true` checkout still matches the lock.
+
+    Every installed file is text and the kit is checked out with LF, so hashes of LF files are
+    unchanged and existing install locks stay valid.
+    """
+    return hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest()
 
 
 def version():
