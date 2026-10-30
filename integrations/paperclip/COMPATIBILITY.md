@@ -44,4 +44,4 @@ GADS needs only the following from a runtime, and treats everything else as opti
 
 ## Versioning
 
-This integration was introduced in GADS 1.0.0 and is unchanged in 1.1.0. It changes no normative policy in `standard/`. A future Paperclip change that breaks a verified row above requires an update to this file and a changelog entry.
+This integration was introduced in GADS 1.0.0 and is unchanged since. It changes no normative policy in `standard/`. A future Paperclip change that breaks a verified row above requires an update to this file and a changelog entry.

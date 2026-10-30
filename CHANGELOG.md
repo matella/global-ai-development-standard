@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 — 2026-10-31
 
 - **Roles:** agents acting in a GADS role start each message with the role's label, for example **[Reviewer]**, so the conversation shows which role is speaking. The rule is in `AGENTS.md` and in each role file, and therefore in the rendered Claude Code subagents.
 - The release workflow reports an administrator bypass of the `release` environment as a bypass, not as a missing approval. `docs/RELEASE.md` says to approve through **Review deployments** and to turn off administrator bypass.

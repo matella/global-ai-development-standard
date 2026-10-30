@@ -1,6 +1,6 @@
 {
   "name": "Global AI Development Standard",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "created": "2026-10-30",
   "language": "en",
   "files": {
@@ -26,7 +26,7 @@
     "agents/skeptic.md": "5aadb479a91fc13f65050c79cd751b0f4c4ec3574f0ff3568545611135a72979",
     "agents/tech-lead.md": "d5ad784de2867622f9538c2586a6d55c7838cd73ce8a460dbbdfbc308250a444",
     "AGENTS.md": "57bdd1451d22107f2390700f7a5ef96936661f944df78c2011d2573e1731bcc4",
-    "CHANGELOG.md": "bfc47b0d19c0d57d4aa4bd38acc1f8b1937c434e94943f3db93cc2385f89ca4a",
+    "CHANGELOG.md": "1765bc4c7cafbd4639aae9253a374d672a1461baf679b515045e372d20881af9",
     "CLAUDE.md": "25fd250a20341963e02864f4033c49d725f9916b659fd302aeada0b631b36775",
     "CODE_OF_CONDUCT.md": "beb50f7f1f4b4708bc8ec1bb434f5a407dec5342e765ffff55969ab177c7c212",
     "CONTRIBUTING.md": "8fad65326607f4c93bb6d3821ca4ea96e71bbf0a07476b93fc6eb424fa5049af",
@@ -34,7 +34,7 @@
     "docs/OPERATIONS.md": "fc31dc89be4496ed66fb0ded189d7b6fc044c75fc6a3c4b7356bccc37a833f63",
     "docs/RELEASE.md": "0f81a32d271ace41aea2f78b315bcefa7cd8098733142cb661d727026ad81ceb",
     "docs/TROUBLESHOOTING.md": "f1155a918b2fedb707964ade9385eec1b5cb29a73379e78e03e318ac7e86093d",
-    "integrations/paperclip/COMPATIBILITY.md": "f851497029ff0115812d01131dbcec50a8c885b0b28d689df7495ccad4542a3b",
+    "integrations/paperclip/COMPATIBILITY.md": "3845c077936eb657c4ea30e8785eb800fbaf2f68e609d9eebeb557eed84f5531",
     "integrations/paperclip/examples/hire-qa-engineer.example.json": "f2fff45942bc9f041f5740d1e0e3b465a67827ef00a4faa33949ca941f474663",
     "integrations/paperclip/GOVERNANCE.md": "3ea2320aceee5eb312ccbd183a836d38847cfd497c7e2f835fef8404157886c5",
     "integrations/paperclip/README.md": "1fbb9e61f2fb385e8bfaf905b0da4b18aefa06cf3e00fd72e44bc8edf677f12c",
@@ -57,9 +57,9 @@
     "integrations/paperclip/skills/gads-testing-qa/SKILL.md": "68ee7febcf84a82690d672a2246908f15ac8f5d77be596ae568960b04d147873",
     "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
     "pilot/PILOT_CHECKLIST.md": "0d32d55bc2d5030ed5cbded689789509ca67df3f6c4fe8bd2c4105369a76bdf1",
-    "README.md": "33ae093c85e4247b0f136f37e41c119b291703af690f91ddddc21edd68b3c514",
+    "README.md": "5a7ef7980b2fdf1ebb2822fcb6a8ac0204d4dda3e2991f4ab615681ec59d3f14",
     "ruff.toml": "9429e055451d348409af99e3b10ff8d3fdf706f6539b6acb120579264266665e",
-    "scripts/example-release-report.json": "0b5cdf35938ded6a7eeb945537ba9cbfdd8ec1d3aaa4395e229666b99a801c15",
+    "scripts/example-release-report.json": "43d720a2fb0381c2c075c63bb3ede111ccee41c30461e87200db88747b0fcfe8",
     "scripts/gads_layout.py": "98504cdbac3261c426cdd1a9f46485035487321062be6b9858c7485309763a61",
     "scripts/install.py": "1e525ea2e296181da7e8351ee92bf51f2ceb66499e0422a60b7f18f9dc408bf3",
     "scripts/release_gate.py": "200d8a7ceec9ed1fc9bce8d9cafea29d4dad57f98ae8f64723f33a538e36edf8",
@@ -85,6 +85,6 @@
     "tests/test_paperclip_integration.py": "40461c7cda80b3829b58b373002461947e3cfe842db30597c930ce57dfbedcf4",
     "tests/test_release_gate.py": "e960574340611eb2b553bdfe1f4042d63168eec667f3685f0d6f0dc8c347aa4c",
     "tests/test_release_report.py": "556ff2d942935dc18411021938300bd975cfff31dffde8b940db622881fc247c",
-    "VERSION": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8"
+    "VERSION": "1e5b51cde515396a9fa762909cf8ca6584ccc564b325d2eebeea76175fe95c4d"
   }
 }

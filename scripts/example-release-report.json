@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "commit": "REPLACE_WITH_FULL_COMMIT_SHA",
   "checks": [
     {
@@ -29,7 +29,7 @@
   ],
   "approvals": [
     {
-      "action": "Publish release v1.1.0",
+      "action": "Publish release v1.2.0",
       "approver": "REPLACE_WITH_ACCOUNTABLE_HUMAN"
     }
   ],
