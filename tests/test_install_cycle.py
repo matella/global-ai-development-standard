@@ -83,7 +83,14 @@ class InstallCycleTests(unittest.TestCase):
             rendered = self.target / f".claude/agents/gads-{role.stem}.md"
             with self.subTest(role=role.stem):
                 self.assertIn(label, role.read_text(encoding="utf-8"))
-                self.assertIn(label, rendered.read_text(encoding="utf-8"))
+                text = rendered.read_text(encoding="utf-8")
+                self.assertIn(label, text)
+                # The main agent relays results using the label named in the description.
+                description = next(line for line in text.splitlines() if line.startswith("description: "))
+                self.assertTrue(description.endswith(f"Replies start with **[{title}]**."), description)
+        claude = (self.target / "CLAUDE.md").read_text(encoding="utf-8")
+        self.assertIn("## Role labels", claude)
+        self.assertIn("Do not replace the label with your own heading", claude)
 
     def test_dry_run_writes_nothing(self):
         result = self.ok("install.py", "--dry-run")

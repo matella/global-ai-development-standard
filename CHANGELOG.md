@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Roles:** role labels are now followed by smaller models too. `CLAUDE.md` gains a "Role labels" section with an example, telling the main agent to relay each subagent's result under its label instead of its own heading. Each rendered subagent description names its label, and each role file states the label at the top. In a two-role test on `claude-haiku-5-5`, labels appeared in 3 of 3 runs, against 0 of 3 with 1.2.0.
+
 ## 1.2.0 — 2026-10-31
 
 - **Roles:** agents acting in a GADS role start each message with the role's label, for example **[Reviewer]**, so the conversation shows which role is speaking. The rule is in `AGENTS.md` and in each role file, and therefore in the rendered Claude Code subagents.
