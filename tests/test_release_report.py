@@ -42,5 +42,30 @@ class ReleaseReportTests(unittest.TestCase):
         self.assertEqual(gate(self.out), 1)
 
 
+class ToolLaunchTests(unittest.TestCase):
+    def test_tools_found_on_path_are_launched(self):
+        # npm tools are .cmd files on Windows; launching them by bare name fails there.
+        import importlib.util
+        import os
+        from unittest import mock
+
+        spec = importlib.util.spec_from_file_location("release_report", ROOT / "scripts/release_report.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as tmp:
+            if os.name == "nt":
+                (Path(tmp) / "gads-fake-tool.cmd").write_text("@exit /b 0\r\n", encoding="utf-8")
+            else:
+                tool = Path(tmp) / "gads-fake-tool"
+                tool.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+                tool.chmod(0o755)
+            path = tmp + os.pathsep + os.environ.get("PATH", "")
+            with mock.patch.dict(os.environ, {"PATH": path}), \
+                    mock.patch.object(module, "CHECKS", [("fake", ["gads-fake-tool", "--check"])]):
+                checks, skipped = module.run_checks()
+        self.assertEqual(skipped, [])
+        self.assertEqual(checks, [{"name": "fake", "status": "passed", "command": "gads-fake-tool --check"}])
+
+
 if __name__ == "__main__":
     unittest.main()

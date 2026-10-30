@@ -1,16 +1,18 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 — 2026-10-30
 
 - Restored the one-time repository setup for releases (environment reviewers, tag protection, tag signing) in `docs/RELEASE.md`.
 
-Changes from the v1.1.0 validation campaign (branch `validation/v1.1.0`):
+Changes from the v1.1.0 validation campaign:
 
 - **Security:** the guard hook now denies recursive deletion of `/` or `~` written with `-R`, `--recursive`, `--`, `/*`, `~/*`, quoted `"$HOME"`, or `${HOME}`, including inside subshells, command substitution, and nested `sh -c` strings. It matches Git rules when global options precede the subcommand (`git -C dir reset --hard`), asks before shell commands that touch secrets files, and fails closed on any input it cannot evaluate.
 - **Security:** the Claude Code deny rules block reading `.env` and `.env.*` files in any directory, and SSH private keys.
 - **Installer:** prints a warning when an existing `.claude/settings.json` leaves the guard hook inactive, and a next step when `--force` replaces `AGENTS.md` or `CLAUDE.md`. `--dry-run` shows the full plan before refusing on conflicts. The uninstaller shows how to restore backed-up instruction files.
 - **Audit:** `repo_audit.py` warns when the guard hook is not wired and when replaced instruction files are still waiting in `.gads-backup-*` files.
 - **Standard:** `AGENTS.md` tells agents to read `gads/PROJECT.md`, because agents that read only `AGENTS.md` (OpenCode, Codex) never see the import in `CLAUDE.md`.
+- **Release tooling:** `release_report.py` launches tools by their resolved path, so npm `.cmd` tools such as `markdownlint-cli2` run on Windows.
+- **CI:** updated pinned actions to `actions/checkout` 7.0.1 and `actions/setup-python` 7.1.0.
 - **Adapters:** added an OpenCode adapter (`opencode.json` permission rules, validated with OpenCode 2.0.32) and a Codex page (documentation review only).
 
 ## 1.0.0 — 2026-10-30
