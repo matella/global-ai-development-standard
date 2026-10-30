@@ -1,6 +1,6 @@
 # Global AI Development Standard (GADS)
 
-**Version:** 1.1.0 · **Status:** Stable · **Language:** English · **Primary agent:** Claude Code
+**Version:** 1.2.0 · **Status:** Stable · **Language:** English · **Primary agent:** Claude Code
 
 GADS is a portable operating standard for AI coding agents. It defines how an agent discovers a repository, changes it, verifies its work, and reports evidence, with clear limits on what the agent may do without a human. Git remains the source of truth for approved code and documentation.
 
