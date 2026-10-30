@@ -11,6 +11,14 @@ GADS releases are semantic versions tagged `vMAJOR.MINOR.PATCH`. The version in 
 
 Before the first publication of a version, its tag may be re-pointed, but only after the previous tag is preserved under an archive name and the change is recorded in the changelog.
 
+## One-time repository setup
+
+A repository administrator configures these before the first `v*` tag is pushed. Until the `release` environment has required reviewers, every tag push makes the release workflow fail at its approval step, and nothing is published.
+
+- Create the `release` environment with required reviewers, and restrict its deployments to `v*` tags.
+- Protect `v*` tags against deletion and update.
+- Sign release tags (`git tag -s`) with a key registered on GitHub.
+
 ## Steps
 
 1. **Confirm the scope.** Read `CHANGELOG.md` for the target version. Every user-visible change has an entry.

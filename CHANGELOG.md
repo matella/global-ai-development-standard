@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Restored the one-time repository setup for releases (environment reviewers, tag protection, tag signing) in `docs/RELEASE.md`.
+
 ## 1.0.0 — 2026-10-30
 
 - Initial portable GADS release.
