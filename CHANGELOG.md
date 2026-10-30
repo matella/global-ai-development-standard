@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Roles:** agents acting in a GADS role start each message with the role's label, for example **[Reviewer]**, so the conversation shows which role is speaking. The rule is in `AGENTS.md` and in each role file, and therefore in the rendered Claude Code subagents.
 - The release workflow reports an administrator bypass of the `release` environment as a bypass, not as a missing approval. `docs/RELEASE.md` says to approve through **Review deployments** and to turn off administrator bypass.
 - **Installer:** install hashes treat CRLF as LF. A Windows checkout with `core.autocrlf=true` no longer makes `repo_audit.py` report every GADS file as modified, `install.py --upgrade` write `.gads-new` files for unchanged files, or `uninstall.py` refuse. Existing `gads/install.json` files stay valid.
 
