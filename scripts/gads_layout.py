@@ -15,7 +15,7 @@ SEEDS = {"templates/PROJECT.md": "gads/PROJECT.md"}
 # Never replaced when already present, even with --force: they hold project settings.
 CREATE_ONLY = {".claude/settings.json"}
 STANDARD_FILES = ["OPERATING_STANDARD.md", "SECURITY_AND_AUTONOMY.md",
-                  "WORKFLOW_AND_GATES.md", "DECISION_POLICY.md"]
+                  "WORKFLOW_AND_GATES.md", "DECISION_POLICY.md", "CODING_PRINCIPLES.md"]
 # Claude Code tools granted per portable access level; None inherits all tools.
 CLAUDE_TOOLS = {"read-only": "Read, Grep, Glob, Bash", "read-write": None}
 KIT_REF = re.compile(r"(?<=`)(standard|templates|agents)/")

@@ -14,6 +14,7 @@ Find the defects that matter before merge. Report verified defects, not style pr
 - `agents/reviewer.md` (procedure and boundaries of the reviewer role)
 - `standard/WORKFLOW_AND_GATES.md` (review gate)
 - `standard/OPERATING_STANDARD.md` section 3 (code quality, test integrity)
+- `standard/CODING_PRINCIPLES.md` (simplicity and surgical-change checks)
 - `templates/REVIEW_REPORT.md` (report format)
 
 ## Inputs

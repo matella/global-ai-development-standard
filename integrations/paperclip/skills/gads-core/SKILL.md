@@ -18,6 +18,7 @@ Read these before material changes. They are the source of truth; this skill doe
 - `standard/SECURITY_AND_AUTONOMY.md` (risk tiers R0 to R4, approvals)
 - `standard/WORKFLOW_AND_GATES.md` (lifecycle, gates, completion states)
 - `standard/DECISION_POLICY.md` (decision classes and escalation format)
+- `standard/CODING_PRINCIPLES.md` (assumptions, simplicity, surgical changes, verifiable goals)
 
 In an installed repository the same files live under `gads/standard/` and `gads/PROJECT.md` holds project rules.
 

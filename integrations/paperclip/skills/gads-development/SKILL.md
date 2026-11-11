@@ -13,6 +13,7 @@ Deliver the smallest coherent change that satisfies an accepted task, with tests
 
 - `agents/developer.md` (procedure and boundaries of the developer role)
 - `standard/OPERATING_STANDARD.md` sections 2 to 4 (change design, code quality, documentation)
+- `standard/CODING_PRINCIPLES.md` (assumptions, simplicity, surgical changes, verifiable goals)
 - `standard/WORKFLOW_AND_GATES.md` (implement, verify, test selection)
 - `standard/SECURITY_AND_AUTONOMY.md` (R2 changes need explanation; dependency controls in section 5)
 
