@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+PATCH: two fail-open gaps in the Claude Code guard hook, found by a security review of an installed copy.
+
+- **Security:** the hook command no longer fails open when `python3` is missing. It starts the guard with the first working interpreter among `python3`, `python`, and `py -3`, skipping the Windows Store alias that cannot run, and exits with code 2 to block the tool call when none works or the guard fails. Before, Claude Code treated a missing `python3` as a non-blocking error and ran every command without the guard. Projects that merged the old command into their own `.claude/settings.json` must replace it by hand.
+- **Security:** the guard reads `rm` long options by unambiguous prefix, as GNU `rm` does, so `rm --recur -f /` and `rm --rec ~` are denied like `--recursive`. An `rm` of `/` or `~` with an unrecognised long option, such as `--re`, now asks for approval.
+
 ## 1.3.0 — 2026-11-11
 
 - **Standard:** added `standard/CODING_PRINCIPLES.md`, four coding principles adapted from andrej-karpathy-skills (MIT): think before coding, simplicity first, surgical changes, and goal-driven execution. `AGENTS.md` lists it with the other standard documents, the developer role follows it, the reviewer role checks diffs against it, and `repo_audit.py` checks that it is installed.

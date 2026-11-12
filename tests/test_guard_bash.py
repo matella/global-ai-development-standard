@@ -46,6 +46,27 @@ class GuardBashTests(unittest.TestCase):
                         'bash -c "rm -rf /"', "x=1;(rm -R ~/*)", "sh -c 'cd /tmp && rm -rf $HOME'"]:
             self.assertEqual(decision(command), "deny", command)
 
+    def test_recursive_long_option_prefixes_denied(self):
+        # GNU getopt accepts unambiguous prefixes of long options, so these are all --recursive.
+        for command in ["rm --recur -f /", "rm --rec -f ~", "rm --recursiv --force $HOME", "rm --force --recu /*",
+                        "rm --recursive=yes /", 'bash -c "rm --recur -f /"', "(rm --rec ~/)"]:
+            self.assertEqual(decision(command), "deny", command)
+
+    def test_unrecognised_long_option_on_root_asks(self):
+        # `--r` and `--re` are unambiguous for GNU rm too; anything unrecognised needs a human.
+        for command in ["rm --r -f /", "rm --re ~", "rm --frobnicate /", "rm --=x /", "sh -c 'rm --re $HOME'"]:
+            self.assertEqual(decision(command), "ask", command)
+
+    def test_deny_wins_over_unrecognised_option_ask(self):
+        for command in ["rm --re /; rm -rf ~", 'sh -c "rm --re /" && rm --rec /']:
+            self.assertEqual(decision(command), "deny", command)
+
+    def test_known_long_options_and_scoped_targets_pass(self):
+        for command in ["rm --force --verbose /tmp/file", "rm --forc --verb ~/notes.txt", "rm --interactive=never x",
+                        "rm --one-file-system --preserve-root=all -f build", "rm --recur build/",
+                        "rm --frobnicate build/", "git rm --cached secrets.txt", "rm --no-pres -f ~/x"]:
+            self.assertIsNone(decision(command), command)
+
     def test_scoped_recursive_deletion_passes(self):
         for command in ["rm -rf build/", "rm -rf ./dist", "rm -r ~/project/tmp", "rm /tmp/file",
                         "rm -rf $HOME/.cache/pip", "rm -f ~"]:

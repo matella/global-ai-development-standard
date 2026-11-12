@@ -35,12 +35,22 @@ edits; the tool list cannot enforce that through `Bash`.
   files (`.env*` except `.env.example`, `*.pem`, `*.key`, SSH keys). Git rules also match when global
   options precede the subcommand (`git -C dir reset --hard`). It denies recursive deletion of `/` or
   `~`, including `-R`, `--recursive`, `/*`, `~/*`, `$HOME`, and `${HOME}` targets, inside subshells,
-  `$(...)`, backticks, and nested `bash -c "..."` strings. The check is conservative: it also denies
-  a command that only prints such text, for example `echo "rm -rf /"`.
+  `$(...)`, backticks, and nested `bash -c "..."` strings. Long options count by unambiguous prefix,
+  as GNU `rm` reads them: `--recur` and `--rec` are `--recursive`. An `rm` of `/` or `~` with a long
+  option the guard does not recognise, such as `--re`, gets an "ask" decision. The check is
+  conservative: it also denies a command that only prints such text, for example `echo "rm -rf /"`.
 - The hook fails closed: an event it cannot evaluate gets an "ask" decision.
-- The hook runs `python3`. If `python3` is missing (common on Windows), Claude Code reports a hook
-  error and runs the command without the guard; no change inside the script can prevent that.
-  Check with `python3 --version`, and adjust the command in `.claude/settings.json` if needed.
+- The hook command in `.claude/settings.json` starts the guard with the first working Python 3 among
+  `python3`, `python`, and `py -3`. Each candidate is test-run first, so the Windows Store
+  `python3` alias that exists but cannot run is skipped. If no interpreter works, or the guard itself
+  fails, the command exits with code 2, which makes Claude Code block the tool call and show the
+  reason. Any other failure to start would count as a non-blocking hook error, and Claude Code would
+  run the command without the guard. Without Python 3, every Bash call is blocked until one is
+  installed.
+- The launcher is inline in `settings.json`, not a separate `.sh` file, so a CRLF checkout cannot
+  break it. Claude Code runs hook commands through a POSIX shell (Git Bash on Windows).
+- Projects that merged the 1.3.0 `python3 ".../guard_bash.py"` command by hand should replace it with
+  the current command; the old one fails open on machines without `python3`.
 - In a non-interactive session (`claude -p --permission-mode dontAsk`), an "ask" decision becomes a
   denial. Interactive sessions show the approval prompt.
 - Pattern matching is a safety net, not a security boundary. Keep branch protection, required

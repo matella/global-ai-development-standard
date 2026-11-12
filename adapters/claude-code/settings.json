@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/gads/hooks/guard_bash.py\""
+            "command": "for p in python3 python 'py -3'; do if $p -c 'import sys; sys.exit(sys.version_info < (3, 8))' </dev/null >/dev/null 2>&1; then $p \"$CLAUDE_PROJECT_DIR/gads/hooks/guard_bash.py\" && exit 0; echo 'GADS guard failed to run; command blocked.' >&2; exit 2; fi; done; echo 'GADS guard: no Python 3 found (tried python3, python, py -3); command blocked.' >&2; exit 2"
           }
         ]
       }
