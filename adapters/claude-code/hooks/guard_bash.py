@@ -43,6 +43,10 @@ ASK = [
 # Targets that make a recursive rm destroy the filesystem root or the home directory.
 ROOT_OR_HOME = {"/", "~", "$HOME", "${HOME}"}
 SHELL_PUNCTUATION = set("();<>|&")
+# GNU rm long options other than --recursive. GNU accepts any unambiguous prefix, so
+# `--recur` is --recursive; an option that is neither is treated as possibly recursive.
+RM_LONG_OPTIONS = ("dir", "force", "help", "interactive", "no-preserve-root", "one-file-system",
+                   "preserve-root", "verbose", "version")
 
 
 def root_or_home(target):
@@ -71,36 +75,59 @@ def simple_commands(command):
         yield current
 
 
+def long_option(tok):
+    """Classify an rm long option as "recursive", "known", or "unknown", ignoring any =value."""
+    name = tok[2:].split("=", 1)[0]
+    if len(name) >= 3 and "recursive".startswith(name):
+        return "recursive"
+    if name and any(option.startswith(name) for option in RM_LONG_OPTIONS):
+        return "known"
+    return "unknown"
+
+
 def recursive_rm_of_root_or_home(command, depth=0):
-    """Return a reason when any simple command is a recursive rm of / or the home directory."""
+    """Return a decision when any simple command is a recursive rm of / or the home directory.
+
+    "deny" when the rm is recursive; "ask" when an unrecognised long option could be a
+    recursion prefix. A deny anywhere in the command wins over an ask.
+    """
     if not re.search(r"\brm\b", command):
         return None
     try:
         commands = list(simple_commands(command))
     except ValueError:
         return "ask", "R4: could not parse an rm command"
+    pending = None
     for tokens in commands:
         # A quoted argument can itself be a command, as in `bash -c "rm -rf /"`.
         for tok in tokens:
             if depth < 3 and re.search(r"\brm\b", tok) and re.search(r"\s", tok):
                 nested = recursive_rm_of_root_or_home(tok, depth + 1)
-                if nested:
+                if nested and nested[0] == "deny":
                     return nested
+                pending = pending or nested
         starts = [i for i, tok in enumerate(tokens) if tok == "rm" or tok.endswith("/rm")]
         for start in starts:
-            recursive, targets, options = False, [], True
+            recursive, unknown, targets, options = False, False, [], True
             for tok in tokens[start + 1:]:
                 if options and tok == "--":
                     options = False
                 elif options and tok.startswith("--"):
-                    recursive |= tok == "--recursive"
+                    kind = long_option(tok)
+                    recursive |= kind == "recursive"
+                    unknown |= kind == "unknown"
                 elif options and tok.startswith("-") and len(tok) > 1:
                     recursive |= "r" in tok[1:] or "R" in tok[1:]
                 else:
                     targets.append(tok)
-            if recursive and any(root_or_home(t) for t in targets):
+            if not any(root_or_home(t) for t in targets):
+                continue
+            if recursive:
                 return "deny", "R4: recursive deletion of the filesystem root or home directory"
-    return None
+            if unknown:
+                pending = pending or ("ask", "R4: rm of the filesystem root or home directory "
+                                             "with an unrecognised long option")
+    return pending
 
 
 def decide(command):
